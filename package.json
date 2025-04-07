@@ -1,15 +1,15 @@
 {
-  "name": "haerin-fan-network",
+  "name": "ive-network",
   "version": "1.0.0",
-  "description": "A fan website inspired by haerin.network with image upload functionality",
+  "description": "A fan website for IVE with photo upload functionality",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "keywords": [
-    "haerin",
-    "newjeans",
+    "ive",
+    "kpop",
     "fan",
     "website",
     "photo",

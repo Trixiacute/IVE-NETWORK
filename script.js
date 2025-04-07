@@ -124,19 +124,19 @@ async function loadImages() {
 function initializeWithSampleImages() {
     const sampleImages = [
         {
-            url: "https://i.imgur.com/FcdJV5N.jpg",
-            title: "Haerin at Music Bank",
-            date: "2023-05-15"
+            url: "https://i.imgur.com/JQZJimN.jpg",
+            title: "IVE Group Photo",
+            date: "2023-06-15"
         },
         {
-            url: "https://i.imgur.com/fVnvkG7.jpg",
-            title: "NewJeans Photoshoot",
-            date: "2023-04-22"
+            url: "https://i.imgur.com/x2Xh5y4.jpg",
+            title: "IVE Performance",
+            date: "2023-05-22"
         },
         {
-            url: "https://i.imgur.com/jS0yDxE.jpg",
-            title: "Haerin Selca",
-            date: "2023-06-10"
+            url: "https://i.imgur.com/4fTOjft.jpg",
+            title: "Wonyoung and Yujin",
+            date: "2023-07-10"
         }
     ];
     

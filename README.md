@@ -1,6 +1,6 @@
-# Haerin Network - Photo Sharing Website
+# IVE Network - Photo Sharing Website
 
-A fan website inspired by haerin.network, featuring real-time photo uploads with titles and dates. This website allows fans to share and view Haerin photos in a beautiful, Pinterest-like gallery.
+A fan website inspired by fan network sites, featuring real-time photo uploads with titles and dates. This website allows fans to share and view IVE photos in a beautiful, Pinterest-like gallery.
 
 ## Features
 
@@ -27,8 +27,8 @@ A fan website inspired by haerin.network, featuring real-time photo uploads with
 
 1. Clone this repository
 ```bash
-git clone https://github.com/yourusername/haerin-network.git
-cd haerin-network
+git clone https://github.com/Trixiacute/IVE-NETWORK.git
+cd IVE-NETWORK
 ```
 
 2. Install dependencies
@@ -93,5 +93,4 @@ This project is available for personal and non-commercial use.
 
 ## Acknowledgements
 
-- Inspired by haerin.network
 - Images used in the sample gallery are for demonstration purposes only 
