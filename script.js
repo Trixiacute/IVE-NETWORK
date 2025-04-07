@@ -30,29 +30,27 @@ const storageUsedElement = document.getElementById('storage-used');
 const lastUploadElement = document.getElementById('last-upload');
 const uploadTrendChart = document.getElementById('upload-trend-chart');
 
+// GitHub Pages Demo Mode
+const IS_GITHUB_PAGES = true; // Set to true for GitHub Pages deployment
+
 // Server configuration
-const SERVER_HOST = window.location.hostname === 'localhost' ? 'http://localhost:3001' : 'http://localhost:3001';
+const SERVER_HOST = IS_GITHUB_PAGES ? '' : 'http://localhost:3000';
+
+// API Endpoints
 const API_ENDPOINTS = {
     upload: `${SERVER_HOST}/api/upload`,
     images: `${SERVER_HOST}/api/images`,
-    deleteImage: `${SERVER_HOST}/api/delete-image`
+    delete: `${SERVER_HOST}/api/delete-image/`
 };
 
-// Admin authentication - obscure the credentials
-// Base64 encode the credentials to make them not immediately visible
-const _a = "YWRha2l0YWtlY2U="; // Base64 encoded username
-const _p = "aXZlbG92ZXIxMjM="; // Base64 encoded password
+// Admin credentials
+const ADMIN_CREDENTIALS = {
+    username: 'admin',
+    password: 'gallery123'
+};
 
-// Function to decode the credentials when needed
-function getCredentials() {
-    return {
-        username: atob(_a),
-        password: atob(_p)
-    };
-}
-
-// Admin state
-let isAdminLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+// State management
+let isAdminLoggedIn = false;
 let selectedImages = new Set();
 let adminGalleryImages = [];
 let uploadChart = null;
@@ -175,17 +173,17 @@ adminLoginForm.addEventListener('submit', (e) => {
     // Log attempt details for debugging
     console.log('Login attempt details:');
     console.log(`- Entered username: "${username}" (${username.length} chars)`);
-    console.log(`- Expected username: "${getCredentials().username}" (${getCredentials().username.length} chars)`);
-    console.log(`- Username match (case insensitive): ${username.toLowerCase() === getCredentials().username.toLowerCase()}`);
+    console.log(`- Expected username: "${ADMIN_CREDENTIALS.username}" (${ADMIN_CREDENTIALS.username.length} chars)`);
+    console.log(`- Username match (case insensitive): ${username.toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase()}`);
     console.log(`- Password length entered: ${password.length}`);
-    console.log(`- Expected password length: ${getCredentials().password.length}`);
-    console.log(`- Password match: ${password === getCredentials().password}`);
+    console.log(`- Expected password length: ${ADMIN_CREDENTIALS.password.length}`);
+    console.log(`- Password match: ${password === ADMIN_CREDENTIALS.password}`);
     
     // Simulate network delay (can be removed in production)
     setTimeout(() => {
         // More robust credential checking
-        if (username.toLowerCase() === getCredentials().username.toLowerCase() && 
-            password === getCredentials().password) {
+        if (username.toLowerCase() === ADMIN_CREDENTIALS.username.toLowerCase() && 
+            password === ADMIN_CREDENTIALS.password) {
             // Login successful
             console.log('Login successful');
             isAdminLoggedIn = true;
@@ -200,7 +198,7 @@ adminLoginForm.addEventListener('submit', (e) => {
             
             // Display admin panel
             adminPanel.classList.add('active');
-            adminUsernameDisplay.textContent = getCredentials().username; // Use the correct case from credentials
+            adminUsernameDisplay.textContent = ADMIN_CREDENTIALS.username; // Use the correct case from credentials
             
             // Load images in admin gallery
             loadAdminGallery();
@@ -219,7 +217,7 @@ adminLoginForm.addEventListener('submit', (e) => {
             console.log('Login failed');
             
             // Specific feedback and visual indication
-            if (username.toLowerCase() !== getCredentials().username.toLowerCase()) {
+            if (username.toLowerCase() !== ADMIN_CREDENTIALS.username.toLowerCase()) {
                 showNotification('Invalid username', 'error');
                 usernameInput.style.borderColor = 'rgba(244, 67, 54, 0.7)';
                 usernameInput.focus();
@@ -364,7 +362,7 @@ deleteSelectedBtn.addEventListener('click', async () => {
         
         for (const imageId of selectedImages) {
             try {
-                const response = await fetch(`${API_ENDPOINTS.deleteImage}/${imageId}`, {
+                const response = await fetch(`${API_ENDPOINTS.delete}${imageId}`, {
                     method: 'DELETE'
                 });
                 
@@ -400,83 +398,137 @@ async function loadAdminGallery() {
     try {
         adminGallery.innerHTML = '<div class="loader" style="margin: 2rem auto;"></div>';
         
-        const response = await fetch(API_ENDPOINTS.images);
-        const images = await response.json();
-        
-        adminGalleryImages = images;
-        adminGallery.innerHTML = '';
-        
-        // Update statistics with the image data
-        updateAdminStatistics(images);
-        
-        // Add each image to the admin gallery
-        images.forEach(image => {
-            const fullImageUrl = `${SERVER_HOST}${image.url}`;
-            
-            const galleryItem = document.createElement('div');
-            galleryItem.className = 'admin-gallery-item';
-            galleryItem.dataset.id = image.id;
-            
-            // Create Pinterest-like 600x900 container
-            const imageContainer = document.createElement('div');
-            imageContainer.className = 'image-container';
-            imageContainer.style.position = 'relative';
-            imageContainer.style.width = '100%';
-            imageContainer.style.paddingTop = '150%'; // 900/600 = 1.5 = 150%
-            imageContainer.style.overflow = 'hidden';
-            
-            // Create image element
-            const img = new Image();
-            img.src = fullImageUrl;
-            img.alt = image.title;
-            img.style.position = 'absolute';
-            img.style.top = '0';
-            img.style.left = '0';
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
-            
-            imageContainer.appendChild(img);
-            galleryItem.appendChild(imageContainer);
-            
-            // Set consistent height for Pinterest-like layout
-            let rowSpan = 28; // Default height for 600x900 ratio
-            
-            // Very tall images should be taller
-            if (img.naturalHeight / img.naturalWidth > 1.8) {
-                rowSpan = 34;
-            } 
-            // Square or wider images should be shorter
-            else if (img.naturalHeight / img.naturalWidth < 1.2) {
-                rowSpan = 24;
-            }
-            
-            // Set the grid-row-end property
-            galleryItem.style.gridRowEnd = `span ${rowSpan}`;
-            
-            // Add title overlay
-            const itemTitle = document.createElement('div');
-            itemTitle.className = 'item-title';
-            itemTitle.textContent = image.title;
-            galleryItem.appendChild(itemTitle);
-            
-            // Toggle selection on click
-            galleryItem.addEventListener('click', () => {
-                if (selectedImages.has(image.id)) {
-                    selectedImages.delete(image.id);
-                    galleryItem.classList.remove('selected');
-                } else {
-                    selectedImages.add(image.id);
-                    galleryItem.classList.add('selected');
-                }
+        if (IS_GITHUB_PAGES) {
+            // Use demo images for GitHub Pages
+            setTimeout(() => {
+                adminGallery.innerHTML = '';
+                adminGalleryImages = DEMO_IMAGES;
+                
+                // Update statistics with the demo data
+                updateAdminStatistics(DEMO_IMAGES);
+                
+                DEMO_IMAGES.forEach(image => {
+                    const galleryItem = document.createElement('div');
+                    galleryItem.className = 'admin-gallery-item';
+                    galleryItem.dataset.id = image.id;
+                    
+                    // Create Pinterest-like 600x900 container
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'image-container';
+                    imageContainer.style.position = 'relative';
+                    imageContainer.style.width = '100%';
+                    imageContainer.style.paddingTop = '150%'; // 900/600 = 1.5 = 150%
+                    imageContainer.style.overflow = 'hidden';
+                    
+                    // Create image element
+                    const img = new Image();
+                    img.src = image.url;
+                    img.alt = image.title;
+                    img.style.position = 'absolute';
+                    img.style.top = '0';
+                    img.style.left = '0';
+                    img.style.width = '100%';
+                    img.style.height = '100%';
+                    img.style.objectFit = 'cover';
+                    
+                    imageContainer.appendChild(img);
+                    galleryItem.appendChild(imageContainer);
+                    
+                    // Set consistent height for Pinterest-like layout
+                    let rowSpan = 28; // Default height for 600x900 ratio
+                    
+                    // Add title overlay
+                    const itemTitle = document.createElement('div');
+                    itemTitle.className = 'item-title';
+                    itemTitle.textContent = image.title;
+                    galleryItem.appendChild(itemTitle);
+                    
+                    // Toggle selection on click
+                    galleryItem.addEventListener('click', () => {
+                        if (selectedImages.has(image.id)) {
+                            selectedImages.delete(image.id);
+                            galleryItem.classList.remove('selected');
+                        } else {
+                            selectedImages.add(image.id);
+                            galleryItem.classList.add('selected');
+                        }
+                        
+                        updateDeleteButton();
+                    });
+                    
+                    adminGallery.appendChild(galleryItem);
+                });
                 
                 updateDeleteButton();
+            }, 800);
+        } else {
+            // Fetch from server for local development
+            const response = await fetch(API_ENDPOINTS.images);
+            const images = await response.json();
+            
+            adminGalleryImages = images;
+            adminGallery.innerHTML = '';
+            
+            // Update statistics with the image data
+            updateAdminStatistics(images);
+            
+            // Add each image to the admin gallery
+            images.forEach(image => {
+                const fullImageUrl = `${SERVER_HOST}${image.url}`;
+                
+                const galleryItem = document.createElement('div');
+                galleryItem.className = 'admin-gallery-item';
+                galleryItem.dataset.id = image.id;
+                
+                // Create Pinterest-like 600x900 container
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
+                imageContainer.style.position = 'relative';
+                imageContainer.style.width = '100%';
+                imageContainer.style.paddingTop = '150%'; // 900/600 = 1.5 = 150%
+                imageContainer.style.overflow = 'hidden';
+                
+                // Create image element
+                const img = new Image();
+                img.src = fullImageUrl;
+                img.alt = image.title;
+                img.style.position = 'absolute';
+                img.style.top = '0';
+                img.style.left = '0';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                imageContainer.appendChild(img);
+                galleryItem.appendChild(imageContainer);
+                
+                // Set consistent height for Pinterest-like layout
+                let rowSpan = 28; // Default height for 600x900 ratio
+                
+                // Add title overlay
+                const itemTitle = document.createElement('div');
+                itemTitle.className = 'item-title';
+                itemTitle.textContent = image.title;
+                galleryItem.appendChild(itemTitle);
+                
+                // Toggle selection on click
+                galleryItem.addEventListener('click', () => {
+                    if (selectedImages.has(image.id)) {
+                        selectedImages.delete(image.id);
+                        galleryItem.classList.remove('selected');
+                    } else {
+                        selectedImages.add(image.id);
+                        galleryItem.classList.add('selected');
+                    }
+                    
+                    updateDeleteButton();
+                });
+                
+                adminGallery.appendChild(galleryItem);
             });
             
-            adminGallery.appendChild(galleryItem);
-        });
-        
-        updateDeleteButton();
+            updateDeleteButton();
+        }
     } catch (error) {
         console.error('Error loading admin gallery:', error);
         adminGallery.innerHTML = '<p class="error-message">Failed to load images</p>';
@@ -740,7 +792,7 @@ uploadForm.addEventListener('submit', async (e) => {
         if (result.success) {
             // Add the image to the gallery
             const fullImageUrl = `${SERVER_HOST}${result.image.url}`;
-            addImageToGallery(fullImageUrl, result.image.title);
+            addImageToGallery(fullImageUrl, result.image.title, result.image.date);
             
             // Clear the form
             uploadForm.reset();
@@ -1013,22 +1065,36 @@ function addImageToGallery(url, title, date) {
 // Fetch and display images from the server
 async function loadImages() {
     try {
-        const response = await fetch(API_ENDPOINTS.images);
-        const images = await response.json();
+        photoGallery.innerHTML = '<div class="loader"></div>';
         
-        // Clear gallery first
-        photoGallery.innerHTML = '';
-        
-        // Add each image to the gallery
-        images.forEach(image => {
-            // Add the server host to the image URL
-            const fullImageUrl = `${SERVER_HOST}${image.url}`;
-            addImageToGallery(fullImageUrl, image.title);
-        });
+        if (IS_GITHUB_PAGES) {
+            // Use demo images for GitHub Pages
+            setTimeout(() => {
+                photoGallery.innerHTML = '';
+                DEMO_IMAGES.forEach(image => {
+                    addImageToGallery(image.url, image.title, image.date);
+                });
+            }, 800);
+        } else {
+            // Fetch from server for local development
+            const response = await fetch(API_ENDPOINTS.images);
+            const images = await response.json();
+            
+            photoGallery.innerHTML = '';
+            
+            if (images.length === 0) {
+                photoGallery.innerHTML = '<p class="empty-gallery">No images uploaded yet. Be the first to share!</p>';
+                return;
+            }
+            
+            images.forEach(image => {
+                const fullImageUrl = `${SERVER_HOST}${image.url}`;
+                addImageToGallery(fullImageUrl, image.title, image.date);
+            });
+        }
     } catch (error) {
         console.error('Error loading images:', error);
-        // If server fetch fails, show sample images instead
-        initializeWithSampleImages();
+        photoGallery.innerHTML = '<p class="error-message">Failed to load images. Please try again later.</p>';
     }
 }
 
@@ -1067,7 +1133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (isAdminLoggedIn) {
         // Display admin panel
         adminPanel.classList.add('active');
-        adminUsernameDisplay.textContent = getCredentials().username;
+        adminUsernameDisplay.textContent = ADMIN_CREDENTIALS.username;
         
         // Load images in admin gallery
         loadAdminGallery();
