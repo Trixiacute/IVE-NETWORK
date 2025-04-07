@@ -44,3 +44,37 @@ This project is available for personal and non-commercial use.
 ## Acknowledgements
 
 - Images used in the sample gallery are for demonstration purposes only
+
+## How to Deploy to GitHub
+
+To push your changes to GitHub, follow these steps:
+
+1. Open a PowerShell or Command Prompt window
+2. Navigate to your project directory:
+   ```
+   cd path\to\your\project
+   ```
+3. Add all changes:
+   ```
+   git add .
+   ```
+4. Commit the changes:
+   ```
+   git commit -m "Your commit message"
+   ```
+5. Push to GitHub:
+   ```
+   git push -u origin main
+   ```
+
+Your changes will now be on GitHub at: https://github.com/Trixiacute/IVE-NETWORK
+
+### Deploying to GitHub Pages
+
+1. Go to your GitHub repository settings
+2. Navigate to Pages in the left sidebar
+3. Under "Source", select "Deploy from a branch"
+4. Choose "main" or "gh-pages" branch
+5. Click Save
+
+Your site will be available at: https://trixiacute.github.io/IVE-NETWORK/
