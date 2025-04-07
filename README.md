@@ -2,6 +2,19 @@
 
 A fan website inspired by fan network sites, featuring real-time photo uploads with titles and dates. This website allows fans to share and view IVE photos in a beautiful, Pinterest-like gallery.
 
+## Preview
+
+![IVE Network Homepage](https://i.imgur.com/Qjmm9cT.png)
+
+### Website Features Preview:
+
+- **Dark Theme Interface**: Modern dark UI with gradient accents
+- **Upload Section**: Add photos with titles and dates
+- **Gallery Display**: Grid layout showing all uploaded photos
+- **Social Links**: Quick access to official IVE accounts
+
+The website is optimized for both desktop and mobile viewing experiences.
+
 ## Features
 
 - **Photo Upload**: Upload images with titles and dates
