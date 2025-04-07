@@ -397,12 +397,11 @@ input[type="file"] {
     min-width: 140px;
 }
 
-/* Image container for Pinterest-like 600x900 ratio */
+/* Image container for dynamic aspect ratio */
 .image-container {
     position: relative;
     width: 100%;
     height: 0;
-    padding-top: 150%; /* 900/600 = 1.5 = 150% */
     overflow: hidden;
 }
 
@@ -949,7 +948,6 @@ footer p {
 .admin-gallery-item .image-container {
     position: relative;
     width: 100%;
-    padding-top: 150%; /* 3:2 aspect ratio for 600x900 */
     overflow: hidden;
 }
 

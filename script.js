@@ -398,67 +398,70 @@ deleteSelectedBtn.addEventListener('click', async () => {
 // Load admin gallery
 async function loadAdminGallery() {
     try {
-        adminGallery.innerHTML = '<div class="loader" style="margin: 2rem auto;"></div>';
-        
         const response = await fetch(API_ENDPOINTS.images);
         const images = await response.json();
         
-        adminGalleryImages = images;
+        // Clear gallery first
         adminGallery.innerHTML = '';
         
-        // Update statistics with the image data
-        updateAdminStatistics(images);
-        
-        // Add each image to the admin gallery
+        // Add each image to the gallery
         images.forEach(image => {
-            const fullImageUrl = `${SERVER_HOST}${image.url}`;
-            
             const galleryItem = document.createElement('div');
             galleryItem.className = 'admin-gallery-item';
             galleryItem.dataset.id = image.id;
             
-            // Create Pinterest-like 600x900 container
-            const imageContainer = document.createElement('div');
-            imageContainer.className = 'image-container';
-            imageContainer.style.position = 'relative';
-            imageContainer.style.width = '100%';
-            imageContainer.style.paddingTop = '150%'; // 900/600 = 1.5 = 150%
-            imageContainer.style.overflow = 'hidden';
-            
             // Create image element
             const img = new Image();
-            img.src = fullImageUrl;
+            
+            // Add load event to handle image loading
+            img.onload = function() {
+                // Get the actual aspect ratio of the loaded image
+                const aspectRatio = (img.naturalHeight / img.naturalWidth) * 100;
+                
+                // Create container with the correct aspect ratio
+                const imageContainer = document.createElement('div');
+                imageContainer.className = 'image-container';
+                imageContainer.style.position = 'relative';
+                imageContainer.style.width = '100%';
+                imageContainer.style.paddingTop = `${aspectRatio}%`; // Set padding based on actual ratio
+                imageContainer.style.overflow = 'hidden';
+                
+                img.style.position = 'absolute';
+                img.style.top = '0';
+                img.style.left = '0';
+                img.style.width = '100%';
+                img.style.height = '100%';
+                img.style.objectFit = 'cover';
+                
+                imageContainer.appendChild(img);
+                galleryItem.appendChild(imageContainer);
+                
+                // Set grid row spans based on actual image aspect ratio
+                let rowSpan = Math.ceil(aspectRatio / 10); // Calculate rows based on aspect ratio
+                
+                // Set minimum and maximum row spans to ensure consistent layout
+                rowSpan = Math.max(15, Math.min(rowSpan, 35));
+                
+                // Set the grid-row-end property
+                galleryItem.style.gridRowEnd = `span ${rowSpan}`;
+                
+                // Add title overlay
+                const itemTitle = document.createElement('div');
+                itemTitle.className = 'item-title';
+                itemTitle.textContent = image.title;
+                galleryItem.appendChild(itemTitle);
+            };
+            
+            // Set image source
+            img.src = SERVER_HOST + image.url;
             img.alt = image.title;
-            img.style.position = 'absolute';
-            img.style.top = '0';
-            img.style.left = '0';
-            img.style.width = '100%';
-            img.style.height = '100%';
-            img.style.objectFit = 'cover';
             
-            imageContainer.appendChild(img);
-            galleryItem.appendChild(imageContainer);
-            
-            // Set consistent height for Pinterest-like layout
-            let rowSpan = 28; // Default height for 600x900 ratio
-            
-            // Very tall images should be taller
-            if (img.naturalHeight / img.naturalWidth > 1.8) {
-                rowSpan = 34;
-            } 
-            // Square or wider images should be shorter
-            else if (img.naturalHeight / img.naturalWidth < 1.2) {
-                rowSpan = 24;
-            }
-            
-            // Set the grid-row-end property
-            galleryItem.style.gridRowEnd = `span ${rowSpan}`;
-            
-            // Add title overlay
-            const itemTitle = document.createElement('div');
-            itemTitle.className = 'item-title';
-            itemTitle.textContent = image.title;
-            galleryItem.appendChild(itemTitle);
+            // Initial loader
+            galleryItem.innerHTML = `
+                <div class="gallery-item-loading">
+                    <span class="loader"></span>
+                </div>
+            `;
             
             // Toggle selection on click
             galleryItem.addEventListener('click', () => {
@@ -946,15 +949,17 @@ function addImageToGallery(url, title, date) {
     
     // Add load event to determine height based on aspect ratio
     img.onload = function() {
-        // Pinterest uses 600x900 dimensions (3:2 ratio)
-        // Create a container for fixed ratio
+        // Get the actual aspect ratio of the loaded image
+        const aspectRatio = (img.naturalHeight / img.naturalWidth) * 100;
+        
+        // Create a container with the correct aspect ratio
         galleryItem.innerHTML = '';
         
         const imageContainer = document.createElement('div');
         imageContainer.className = 'image-container';
         imageContainer.style.position = 'relative';
         imageContainer.style.width = '100%';
-        imageContainer.style.paddingTop = '150%'; // 900/600 = 1.5 = 150%
+        imageContainer.style.paddingTop = `${aspectRatio}%`; // Set padding based on actual ratio
         imageContainer.style.overflow = 'hidden';
         
         img.style.position = 'absolute';
@@ -967,18 +972,11 @@ function addImageToGallery(url, title, date) {
         imageContainer.appendChild(img);
         galleryItem.appendChild(imageContainer);
         
-        // Pinterest has some variation in heights, but maintains the same width
-        // Set consistent height spans based on aspect ratio
-        let rowSpan = 28; // Default height for 600x900 ratio
+        // Set grid row spans based on actual image aspect ratio
+        let rowSpan = Math.ceil(aspectRatio / 6); // Calculate rows based on aspect ratio (6px per row)
         
-        // Very tall images should be taller
-        if (img.naturalHeight / img.naturalWidth > 1.8) {
-            rowSpan = 34;
-        } 
-        // Square or wider images should be shorter
-        else if (img.naturalHeight / img.naturalWidth < 1.2) {
-            rowSpan = 24;
-        }
+        // Set minimum and maximum row spans to ensure consistent layout
+        rowSpan = Math.max(20, Math.min(rowSpan, 40));
         
         // Set the grid-row-end property
         galleryItem.style.gridRowEnd = `span ${rowSpan}`;

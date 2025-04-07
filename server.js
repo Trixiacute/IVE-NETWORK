@@ -145,16 +145,16 @@ const server = http.createServer((req, res) => {
       const newFilename = `${timestamp}${fileExt || '.jpg'}`; // Default to jpg if no extension
       const newPath = path.join(uploadsDir, newFilename);
 
-      console.log('Resizing image to 1200x...');
+      console.log('Resizing image to 1080x1920...');
       
       try {
         // Use a try-catch block around the entire resize operation
         sharp(uploadedFile.filepath)
           .resize({
-            width: 1200,
-            height: null, // Maintain aspect ratio
-            fit: 'inside',
-            withoutEnlargement: true
+            width: 1080,
+            height: 1920,
+            fit: 'cover',
+            position: 'center'
           })
           .toFile(newPath, (err) => {
             // Delete the temporary file regardless of outcome

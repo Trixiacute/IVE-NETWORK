@@ -8,7 +8,7 @@ A modern, Pinterest-style photo gallery web application with admin functionality
 
 ## Features
 
-- **Pinterest-Style Gallery Layout**: Images displayed in a masonry-style grid with 600x900 pixel aspect ratio (3:2)
+- **Adaptive Gallery Layout**: Images displayed in a masonry-style grid maintaining the original aspect ratio of each photo
 - **Drag & Drop Upload**: Easy photo uploading with drag and drop functionality
 - **Admin Panel**: Secure admin login with photo management capabilities
 - **Responsive Design**: Works seamlessly on desktop and mobile devices
