@@ -1363,4 +1363,58 @@ footer p {
     background-color: rgba(255, 94, 133, 0.3);
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(255, 94, 133, 0.25);
+}
+
+/* Demo notice styling */
+.demo-notice {
+    background-color: rgba(0, 0, 0, 0.4);
+    border-left: 4px solid #3498db;
+    padding: 12px 15px;
+    margin: 15px 0;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.demo-notice p {
+    margin: 5px 0;
+}
+
+.demo-notice strong {
+    color: #ff5e85;
+    font-weight: 600;
+}
+
+.demo-notice i {
+    color: #3498db;
+    margin-right: 5px;
+}
+
+/* Update server status indicator for demo mode */
+.server-status.demo {
+    background: linear-gradient(to right, rgba(52, 152, 219, 0.2), rgba(52, 152, 219, 0.05));
+    border-left: 3px solid #3498db;
+}
+
+.server-status.demo .status-indicator {
+    background-color: #3498db;
+    box-shadow: 0 0 10px #3498db;
+    animation: pulse 2s infinite;
+}
+
+.server-status.demo .status-text {
+    color: #3498db;
+    font-weight: 500;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 8px rgba(52, 152, 219, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+    }
 } 

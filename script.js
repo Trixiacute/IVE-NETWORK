@@ -66,8 +66,23 @@ let adminStatistics = {
     popularDays: {}
 };
 
-// Server connection state
-let isServerConnected = false;
+// Server connection state - always true in GitHub Pages mode
+let isServerConnected = IS_GITHUB_PAGES ? true : false;
+
+// For GitHub Pages demo image upload simulation
+const demoImageLibrary = [
+    "https://source.unsplash.com/600x900/?nature,forest",
+    "https://source.unsplash.com/600x900/?city,night",
+    "https://source.unsplash.com/600x900/?beach,sunset",
+    "https://source.unsplash.com/600x900/?mountains,snow",
+    "https://source.unsplash.com/600x900/?food,restaurant",
+    "https://source.unsplash.com/600x900/?animals,pets",
+    "https://source.unsplash.com/600x900/?interior,home",
+    "https://source.unsplash.com/600x900/?technology,gadgets",
+    "https://source.unsplash.com/600x900/?portrait,people",
+    "https://source.unsplash.com/600x900/?travel,adventure"
+];
+let nextImageId = 11; // Start after demo images
 
 // Admin panel variables
 let statsRefreshInterval = null;
@@ -357,6 +372,29 @@ deleteSelectedBtn.addEventListener('click', async () => {
         
         adminPanel.appendChild(loadingOverlay);
         
+        // If in GitHub Pages mode, simulate deletion
+        if (IS_GITHUB_PAGES) {
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            
+            // Filter out the selected images from demo images
+            DEMO_IMAGES = DEMO_IMAGES.filter(image => !selectedImages.has(image.id));
+            
+            // Remove loading overlay
+            adminPanel.removeChild(loadingOverlay);
+            
+            // Refresh galleries
+            selectedImages.clear();
+            updateDeleteButton();
+            
+            // Reload galleries
+            loadImages();
+            loadAdminGallery();
+            
+            return;
+        }
+        
+        // Regular delete flow for non-GitHub Pages environment
         // Process each image deletion one by one
         let successCount = 0;
         
@@ -380,8 +418,6 @@ deleteSelectedBtn.addEventListener('click', async () => {
         
         // Remove loading overlay
         adminPanel.removeChild(loadingOverlay);
-        
-        // Success message removed as requested
         
         // Clear selection
         selectedImages.clear();
@@ -546,8 +582,31 @@ function updateDeleteButton() {
     }
 }
 
-// Check server connection
+// Check server connection - simulated for GitHub Pages
 async function checkServerConnection() {
+    if (IS_GITHUB_PAGES) {
+        console.log('Running in GitHub Pages demo mode');
+        isServerConnected = true;
+        
+        if (statusIndicator) {
+            statusIndicator.className = 'status-indicator online';
+            statusText.textContent = 'Demo Mode';
+        }
+        
+        if (uploadBtn) {
+            uploadBtn.disabled = false;
+        }
+        
+        if (retryConnectionBtn) {
+            retryConnectionBtn.style.display = 'none';
+        }
+        
+        // Load demo images
+        loadImages();
+        return true;
+    }
+    
+    // Original server check code for local development
     try {
         console.log('Checking server connection at:', SERVER_HOST);
         const controller = new AbortController();
@@ -702,8 +761,8 @@ uploadBtn.addEventListener('mouseup', () => {
     uploadBtn.style.boxShadow = '';
 });
 
-// Handle form submission
-uploadForm.addEventListener('submit', async (e) => {
+// Handle form submission with GitHub Pages simulation
+uploadForm.addEventListener('submit', async function(e) {
     e.preventDefault();
 
     // Validate form
@@ -736,14 +795,7 @@ uploadForm.addEventListener('submit', async (e) => {
         progressFill.style.width = '0%';
         progressFill.parentElement.style.display = 'block';
     }
-    
-    // Reset formData and create a new instance
-    const formData = new FormData();
-    formData.append('title', photoTitle.value || 'Untitled Image');
 
-    // Now append the file with the correct field name to match server-side
-    formData.append('file', file);
-    
     try {
         // Show a progress bar during upload
         let progress = 0;
@@ -756,13 +808,59 @@ uploadForm.addEventListener('submit', async (e) => {
             }
         }, 300);
         
-        // Check server connection first
-        if (!isServerConnected) {
+        // If in GitHub Pages mode, simulate upload
+        if (IS_GITHUB_PAGES) {
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Create a simulated image result
+            const title = photoTitle.value.trim() || 'Untitled Image';
+            const randomImage = demoImageLibrary[Math.floor(Math.random() * demoImageLibrary.length)];
+            const today = new Date().toISOString().split('T')[0];
+            
+            const simulatedImageResult = {
+                id: `demo-${nextImageId++}`,
+                title: title,
+                url: randomImage + `?=${Date.now()}`, // Make URL unique with timestamp
+                date: today,
+                fileSize: Math.floor(Math.random() * 5000000) + 1000000 // Random size between 1-5MB
+            };
+            
+            // Complete the progress bar
+            if (progressFill) {
+                progressFill.style.width = '100%';
+                progressFill.nextElementSibling.textContent = '100%';
+            }
+            
             clearInterval(progressInterval);
-            throw new Error('Server is not connected. Please try again later.');
+            
+            // Add the image to demo images for the session
+            DEMO_IMAGES.unshift(simulatedImageResult);
+            
+            // Add the new image to the gallery
+            addImageToGallery(simulatedImageResult.url, simulatedImageResult.title, simulatedImageResult.date);
+            
+            // Clear the form
+            uploadForm.reset();
+            if (fileName) {
+                fileName.textContent = 'No file selected';
+            }
+            
+            // Hide progress bar after delay
+            setTimeout(() => {
+                if (progressFill) progressFill.parentElement.style.display = 'none';
+            }, 2000);
+            
+            // Show notification that happens only during real upload success
+            showNotification('Image uploaded successfully (demo)', 'info');
+            
+            return;
         }
         
-        console.log('Uploading file:', file.name, 'Size:', file.size, 'Type:', file.type);
+        // Regular upload flow for non-GitHub Pages environment
+        const formData = new FormData();
+        formData.append('title', photoTitle.value || 'Untitled Image');
+        formData.append('file', file);
         
         // Set timeout for the fetch request - 30 seconds
         const controller = new AbortController();

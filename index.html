@@ -9,6 +9,14 @@
     <title>IVE Network - Photo Gallery</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Add preconnect for faster loading -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Meta tags for better SEO and social sharing -->
+    <meta name="description" content="A modern photo gallery with Pinterest-style layout and admin functionality">
+    <meta property="og:title" content="Photo Gallery">
+    <meta property="og:description" content="A modern photo gallery with Pinterest-style layout and admin functionality">
+    <meta property="og:type" content="website">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <!-- Chart.js for statistics -->
@@ -20,15 +28,24 @@
             <h1 class="title">IVE Network</h1>
             <p class="subtitle">Share your favorite moments of IVE</p>
             <!-- Server status indicator -->
-            <div id="server-status" class="server-status">
-                <span class="status-indicator"></span>
-                <span class="status-text">Checking server...</span>
+            <div id="server-status" class="server-status demo">
+                <span class="status-indicator online"></span>
+                <span class="status-text">GitHub Pages Demo Mode</span>
             </div>
             <!-- Admin login button -->
             <button id="admin-login-btn" class="admin-btn">Admin Login</button>
         </header>
         
         <main>
+            <section class="welcome-section">
+                <h2>Welcome to our Photo Gallery</h2>
+                <p>Upload your photos and share them with the world. Our Pinterest-style layout showcases your images beautifully.</p>
+                <div class="demo-notice">
+                    <p><i class="fas fa-info-circle"></i> This is a <strong>GitHub Pages demo version</strong>. Uploads are simulated and will only persist during your current session.</p>
+                    <p>Admin login: username <strong>admin</strong>, password <strong>gallery123</strong></p>
+                </div>
+            </section>
+            
             <section class="upload-section">
                 <h2 class="title">Upload Your Photo</h2>
                 <p class="subtitle">Share your memories with the world</p>
