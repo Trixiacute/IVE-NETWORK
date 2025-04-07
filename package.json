@@ -19,9 +19,18 @@
   "license": "MIT",
   "dependencies": {
     "formidable": "^2.1.2",
-    "multer": "^1.4.5-lts.1"
+    "multer": "^1.4.5-lts.1",
+    "sharp": "^0.34.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Trixiacute/IVE-NETWORK.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Trixiacute/IVE-NETWORK/issues"
+  },
+  "homepage": "https://github.com/Trixiacute/IVE-NETWORK#readme"
 }
