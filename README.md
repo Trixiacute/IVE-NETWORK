@@ -4,7 +4,7 @@ A fan website inspired by fan network sites, featuring real-time photo uploads w
 
 ## Preview
 
-![IVE Network Homepage](https://i.imgur.com/Qjmm9cT.png)
+![IVE Network Homepage](![Cuplikan layar 2025-04-07 104510](https://github.com/user-attachments/assets/6236f35b-0588-41f3-bf07-8ef42546572e)
 
 ### Website Features Preview:
 
