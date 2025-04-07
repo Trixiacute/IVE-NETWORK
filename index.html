@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Haerin Fan Network</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1 class="title">HAERIN <span>NETWORK</span></h1>
+            <div class="subtitle">Free, unlimited, original quality upload. NewJeans Haerin photo sharing web page</div>
+        </header>
+
+        <main>
+            <div class="upload-section">
+                <h2>Upload Haerin photo publicly</h2>
+                <form id="upload-form" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="text" id="photo-title" placeholder="Photo title" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="date" id="photo-date" required>
+                    </div>
+                    <div class="form-group file-input-container">
+                        <label for="file-upload" class="custom-file-upload">
+                            PILIH FILE
+                        </label>
+                        <span id="file-name">Tidak ada file yang dipilih</span>
+                        <input type="file" id="file-upload" name="photo" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="upload-btn">Upload</button>
+                </form>
+            </div>
+
+            <div class="gallery-container">
+                <h2>Photo Gallery</h2>
+                <div class="gallery" id="photo-gallery">
+                    <!-- Photos will be added here dynamically -->
+                </div>
+            </div>
+
+            <div class="links">
+                <a href="https://www.instagram.com/newjeans_official/" class="link-card" target="_blank">
+                    <span class="link-title">Instagram</span>
+                    <span class="link-icon">→</span>
+                </a>
+                <a href="https://twitter.com/NewJeans_ADOR" class="link-card" target="_blank">
+                    <span class="link-title">Twitter</span>
+                    <span class="link-icon">→</span>
+                </a>
+                <a href="https://newjeans.kr/" class="link-card" target="_blank">
+                    <span class="link-title">Official Website</span>
+                    <span class="link-icon">→</span>
+                </a>
+                <a href="https://weverse.io/newjeans/feed" class="link-card" target="_blank">
+                    <span class="link-title">Weverse</span>
+                    <span class="link-icon">→</span>
+                </a>
+            </div>
+        </main>
+
+        <footer>
+            <p>© 2023 Haerin Fan Network</p>
+            <p>This is a fan-made website</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 
